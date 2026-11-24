@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, score_badge with context %}
+{% block title %}Analytics{% endblock %}
+{% block subnav %}{% include "partials/teacher_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Analytics</h1></div>
+<h2>Most frequently missed questions</h2>
+{% if hard %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Question</th><th>Test</th><th>Answers</th><th>Wrong</th></tr></thead><tbody>
+{% for h in hard %}<tr><td data-label="Question">{{ h.text[:140] }}</td><td data-label="Test">{{ h.title }}</td><td data-label="Answers">{{ h.answers }}</td><td data-label="Wrong"><span class="badge danger">{{ h.rate }}%</span></td></tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty('Not enough answers yet (a question needs at least 3 answers).') }}{% endif %}
+<h2>Test statistics</h2>
+{% if tests %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Test</th><th>Attempts</th><th>Average</th></tr></thead><tbody>
+{% for t in tests %}<tr><td data-label="Test">{{ t.title }}</td><td data-label="Attempts">{{ t.attempts }}</td><td data-label="Average">{{ score_badge(t.avg) }}</td></tr>{% endfor %}</tbody></table></div>{% else %}{{ empty('No data.') }}{% endif %}
+{% endblock %}

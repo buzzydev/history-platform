@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf, empty, icon, score_badge with context %}
+{% block title %}{{ t.title }}{% endblock %}
+{% block subnav %}{% include "partials/student_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ t.title }}</h1></div>
+<div class="card stack">
+  <div class="muted">{{ t.subject_name }}{% if t.grade_name %} &middot; {{ t.grade_name }}{% endif %}</div>
+  {% if t.description %}<p>{{ t.description }}</p>{% endif %}
+  <div class="kv">
+    <div><span>Questions per attempt</span><strong>{{ [t.questions_per_attempt, t.qcount]|min }}</strong></div>
+    <div><span>Time limit</span><strong>{{ t.time_limit_minutes ~ ' minutes' if t.time_limit_minutes else 'None' }}</strong></div>
+    <div><span>Attempts used</span><strong>{{ t.my_attempts }}{{ ' of ' ~ t.max_attempts if t.max_attempts else ' (unlimited)' }}</strong></div>
+    <div><span>Feedback</span><strong>{{ 'Correct answer shown after each question' if t.show_correct else 'Shown at the end' }}</strong></div>
+  </div>
+  {% if current_user.role == 'student' %}
+  <form method="post" action="{{ url_for('main.start', test_id=t.id) }}">{{ csrf() }}
+    <button class="btn primary block" type="submit" {{ 'disabled' if t.max_attempts and t.my_attempts >= t.max_attempts and not t.my_open }}>{{ icon('play', 18) }} {{ 'Resume attempt' if t.my_open else 'Start test' }}</button>
+  </form>
+  {% else %}<div class="notice">Admins and teachers can preview tests but only students take them.</div>{% endif %}
+</div>
+<h2>My attempts</h2>
+{% if attempts %}
+<div class="table-wrap"><table class="table-stack"><thead><tr><th>#</th><th>Status</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>
+{% for a in attempts %}<tr><td data-label="#">{{ a.attempt_no }}</td><td data-label="Status"><span class="badge">{{ a.status.replace('_',' ') }}</span></td>
+<td data-label="Score">{% if a.status != 'in_progress' %}{{ score_badge(a.percentage) }}{% else %}&ndash;{% endif %}</td><td data-label="Date">{{ a.started_at|dt }}</td>
+<td class="nolabel"><a class="btn" href="{{ url_for('main.result', attempt_id=a.id) }}">Open</a></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}{{ empty('No attempts yet.') }}{% endif %}
+{% endblock %}

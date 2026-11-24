@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, score_badge with context %}
+{% block title %}Dashboard{% endblock %}
+{% block subnav %}{% include "partials/student_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Hello, {{ current_user.first_name }}!</h1><a class="btn primary" href="{{ url_for('main.tests') }}">Browse all tests</a></div>
+<div class="stats">
+  <div class="stat"><div class="v">{{ stats.completed }}</div><div class="l">Completed tests</div></div>
+  <div class="stat"><div class="v">{{ stats.average|round(0)|int }}%</div><div class="l">Average score</div></div>
+  <div class="stat"><div class="v">{{ stats.best|round(0)|int }}%</div><div class="l">Best score</div></div>
+  <div class="stat"><div class="v">{{ stats.correct }}</div><div class="l">Correct answers</div></div>
+</div>
+<h2>Recently added tests</h2>
+{% if tests %}
+<div class="grid cols-3">
+{% for t in tests %}
+  <a class="card hover" href="{{ url_for('main.test_detail', test_id=t.id) }}">
+    <div class="row between"><strong>{{ t.title }}</strong>{% if t.my_open %}<span class="badge warning">In progress</span>{% endif %}</div>
+    <div class="muted small">{{ t.subject_name }}{% if t.grade_name %} &middot; {{ t.grade_name }}{% endif %}</div>
+    <div class="muted small">{{ t.qcount }} questions{% if t.time_limit_minutes %} &middot; {{ t.time_limit_minutes }} min{% endif %}</div>
+  </a>
+{% endfor %}
+</div>
+{% else %}{{ empty('No tests are published yet. Please check back soon.') }}{% endif %}
+<h2>Recent activity</h2>
+{% if recent %}
+<div class="table-wrap"><table class="table-stack"><thead><tr><th>Test</th><th>Status</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>
+{% for a in recent %}<tr>
+  <td data-label="Test">{{ a.title }}</td><td data-label="Status"><span class="badge">{{ a.status.replace('_',' ') }}</span></td>
+  <td data-label="Score">{% if a.status != 'in_progress' %}{{ score_badge(a.percentage) }}{% else %}&ndash;{% endif %}</td>
+  <td data-label="Date">{{ a.started_at|dt }}</td>
+  <td class="nolabel"><a class="btn" href="{{ url_for('main.result', attempt_id=a.id) }}">{{ 'Resume' if a.status == 'in_progress' else 'View' }}</a></td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty('You have not taken any tests yet.') }}{% endif %}
+<h2>Notifications</h2>
+<div class="card">
+{% for n in notes %}<div class="note{{ ' unread' if not n.is_read }}"><div class="t">{{ n.title }}</div><div class="muted small">{{ n.body }}</div></div>
+{% else %}<p class="muted">No notifications.</p>{% endfor %}
+</div>
+{% endblock %}

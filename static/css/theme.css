@@ -1,0 +1,52 @@
+/* All colours live here as CSS variables. Light primary: #bdb08e. Dark primary surface: #2e104a. */
+:root {
+  color-scheme: light;
+  --bg: #f6f2e8;
+  --surface: #fffdf8;
+  --surface-2: #efe8d6;
+  --text: #2b2618;
+  --muted: #6b6350;
+  --border: #ddd3b8;
+  --primary: #bdb08e;
+  --primary-hover: #b0a27c;
+  --on-primary: #2b2618;
+  --link: #6f6238;
+  --focus: #6f6238;
+  --nav-bg: rgba(246, 242, 232, 0.88);
+  --success: #2f7d4f;
+  --success-bg: #e3f2e8;
+  --danger: #b3392f;
+  --danger-bg: #f9e4e1;
+  --warning: #8a5d0d;
+  --warning-bg: #fbf0d5;
+  --info: #2f5f8a;
+  --info-bg: #e3eef8;
+  --overlay: rgba(43, 38, 24, 0.55);
+  --shadow: 0 1px 2px rgba(43, 38, 24, 0.06), 0 8px 24px rgba(43, 38, 24, 0.08);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a0930;
+  --surface: #2e104a;
+  --surface-2: #3a1a5c;
+  --text: #f1e9fb;
+  --muted: #bfaed6;
+  --border: #4d2d73;
+  --primary: #a77df0;
+  --primary-hover: #b794f4;
+  --on-primary: #1a0930;
+  --link: #d2b8ff;
+  --focus: #d2b8ff;
+  --nav-bg: rgba(26, 9, 48, 0.88);
+  --success: #6fd69a;
+  --success-bg: #1d3a2f;
+  --danger: #ff9c94;
+  --danger-bg: #4a1f2e;
+  --warning: #f3c969;
+  --warning-bg: #4a3a1a;
+  --info: #8ec5ff;
+  --info-bg: #1f3358;
+  --overlay: rgba(10, 3, 20, 0.7);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+}

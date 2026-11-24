@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_ui.html" import field, pw_field, csrf with context %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="card auth-card">
+  <h1>Create account</h1>
+  {% if closed is defined and closed %}<div class="notice warning">Registration is currently closed.</div>
+  {% else %}
+  <form method="post" action="{{ url_for('auth.register') }}" novalidate>
+    {{ csrf() }}
+    <div class="form-grid">
+      {{ field('first_name', 'First name', form.get('first_name',''), error=errors.get('first_name',''), autocomplete='given-name') }}
+      {{ field('last_name', 'Last name', form.get('last_name',''), error=errors.get('last_name',''), autocomplete='family-name') }}
+    </div>
+    {{ field('phone', 'Phone number', form.get('phone',''), 'tel', errors.get('phone',''), autocomplete='tel', hint='Example: +998 90 123 45 67') }}
+    {{ field('username', 'Username', form.get('username',''), error=errors.get('username',''), autocomplete='username') }}
+    {{ pw_field('password', 'Password', errors.get('password',''), 'new-password', 'At least 8 characters, with letters and digits.') }}
+    {{ pw_field('password_confirm', 'Confirm password', errors.get('password_confirm',''), 'new-password') }}
+    <button class="btn primary block" type="submit">Register</button>
+  </form>
+  {% endif %}
+  <p class="small muted mt">Already registered? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+</div>
+{% endblock %}

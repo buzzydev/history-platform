@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager, act_delete, score_badge with context %}
+{% block title %}Attempts{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Quiz attempts</h1></div>
+<form class="filters" method="get"><input type="search" name="q" value="{{ q }}" placeholder="Student or test" aria-label="Search">
+  <select name="status" aria-label="Status"><option value="">Any status</option>{% for s in ['in_progress','completed','expired'] %}<option value="{{ s }}" {{ 'selected' if st == s }}>{{ s.replace('_',' ') }}</option>{% endfor %}</select><span></span><button class="btn primary" type="submit">Filter</button></form>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Student</th><th>Test</th><th>#</th><th>Status</th><th>Score</th><th>Started</th><th></th></tr></thead><tbody>
+{% for a in pg.rows %}<tr><td data-label="Student">{{ a.username }}</td><td data-label="Test">{{ a.title }}</td><td data-label="Attempt">{{ a.attempt_no }}</td><td data-label="Status"><span class="badge">{{ a.status.replace('_',' ') }}</span></td>
+<td data-label="Score">{{ score_badge(a.percentage) if a.status != 'in_progress' else '–' }}</td><td data-label="Started">{{ a.started_at|dt }}</td>
+<td class="nolabel">{{ act_delete(url_for('admin.attempt_delete', aid=a.id), 'Delete this attempt? The student will get the attempt back.', 'Delete attempt') }}</td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No attempts.') }}{% endif %}
+{% endblock %}

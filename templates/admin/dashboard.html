@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty with context %}
+{% block title %}Admin{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Admin dashboard</h1></div>
+<div class="stats">
+  <div class="stat"><div class="v">{{ c.users }}</div><div class="l">Users ({{ c.teachers }} teachers)</div></div>
+  <div class="stat"><div class="v">{{ c.published }}/{{ c.tests }}</div><div class="l">Published tests</div></div>
+  <div class="stat"><div class="v">{{ c.questions }}</div><div class="l">Approved questions</div></div>
+  <div class="stat"><div class="v">{{ c.pending }}</div><div class="l">Awaiting approval</div></div>
+  <div class="stat"><div class="v">{{ c.attempts }}</div><div class="l">Completed attempts</div></div>
+  <div class="stat"><div class="v">{{ c.open }}</div><div class="l">Quizzes in progress</div></div>
+  <div class="stat"><div class="v">{{ c.students }}</div><div class="l">Students</div></div>
+  <div class="stat"><div class="v">{% if last_backup %}{{ 'OK' if last_backup.status == 'success' else last_backup.status }}{% else %}&ndash;{% endif %}</div><div class="l">Last backup</div></div>
+</div>
+<div class="grid cols-2 mt">
+  <div class="card"><h3>Recent failed logins</h3>
+    {% for f in failed %}<div class="note"><strong>{{ f.username }}</strong> <span class="muted small">{{ f.reason }} &middot; {{ f.created_at|dt }} &middot; {{ f.ip }}</span></div>{% else %}<p class="muted">None.</p>{% endfor %}
+  </div>
+  <div class="card"><h3>Recent activity</h3>
+    {% for r in recent %}<div class="note"><strong>{{ r.action }}</strong> <span class="muted small">{{ r.actor_username or 'system' }} &middot; {{ r.created_at|dt }}</span></div>{% else %}<p class="muted">None.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

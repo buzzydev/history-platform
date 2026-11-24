@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+{% block subnav %}{% include "partials/student_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ t.title }}</h1></div>
+<div class="card center">
+  {% if t.show_results %}
+  <div class="score-ring">{{ a.percentage|pct }}</div>
+  <div class="stats">
+    <div class="stat"><div class="v">{{ a.total_questions }}</div><div class="l">Total questions</div></div>
+    <div class="stat"><div class="v">{{ a.correct_count }}</div><div class="l">Correct</div></div>
+    <div class="stat"><div class="v">{{ a.incorrect_count }}</div><div class="l">Incorrect</div></div>
+    <div class="stat"><div class="v">{{ a.time_spent_seconds|dur }}</div><div class="l">Time spent</div></div>
+  </div>
+  {% else %}<h2>Test completed</h2><p class="muted">Results for this test are not shown to students.</p>{% endif %}
+  <p class="muted small">Completed {{ a.completed_at|dt }}{{ ' (time ran out)' if a.status == 'expired' }}</p>
+  <div class="row center-row">
+    <a class="btn" href="{{ url_for('main.history') }}">My history</a>
+    {% if can_retry %}<form method="post" action="{{ url_for('main.start', test_id=t.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn primary" type="submit">Try again</button></form>{% endif %}
+  </div>
+</div>
+{% if review %}
+<h2>Answer review</h2>
+<div class="stack">
+{% for r in review %}
+  <div class="card">
+    <div class="row between"><strong>{{ r.position }}. {{ r.text }}</strong>{% if r.is_correct is none %}<span class="badge warning">Unanswered</span>{% elif r.is_correct %}<span class="badge success">Correct</span>{% else %}<span class="badge danger">Incorrect</span>{% endif %}</div>
+    {% if r.chosen %}<p class="small">Your answer: {{ r.chosen }}</p>{% endif %}
+    <p class="small">Correct answer: <strong>{{ r.right }}</strong></p>
+    {% if r.explanation %}<div class="explain small">{{ r.explanation }}</div>{% endif %}
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

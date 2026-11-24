@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf, empty, act_delete with context %}
+{% block title %}Announcements{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Announcements</h1></div>
+<div class="card mb"><form method="post">{{ csrf() }}
+  <div class="field"><label for="title">Title</label><input id="title" name="title" type="text" maxlength="120" required></div>
+  <div class="field"><label for="body">Message</label><textarea id="body" name="body" maxlength="1000"></textarea></div>
+  <div class="field"><label for="level">Type</label><select id="level" name="level"><option>info</option><option>success</option><option>warning</option><option>error</option></select></div>
+  <button class="btn primary" type="submit">Send to all users</button></form></div>
+{% if rows %}<div class="card">{% for n in rows %}<div class="note"><div class="row between"><span class="t">{{ n.title }}</span>{{ act_delete(url_for('admin.notification_delete', nid=n.id), 'Delete this announcement?') }}</div><div class="muted small">{{ n.body }} &middot; {{ n.created_at|dt }}</div></div>{% endfor %}</div>
+{% else %}{{ empty('No announcements yet.', 'bell') }}{% endif %}
+{% endblock %}

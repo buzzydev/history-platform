@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}System health{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>System health</h1></div>
+<div class="card kv">{% for k, v in info.items() %}<div><span>{{ k }}</span><strong>{{ v }}</strong></div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf, empty, icon with context %}
+{% block title %}PDF import{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Import questions from PDF</h1></div>
+<div class="card">
+  <form method="post" enctype="multipart/form-data">{{ csrf() }}
+    <div class="field"><label for="file">PDF file (text-based or scanned)</label><input id="file" type="file" name="file" accept="application/pdf,.pdf" required></div>
+    <div class="form-grid">
+      <div class="field"><label for="title">Test collection name</label><input id="title" type="text" name="title" maxlength="150"></div>
+      <div class="field"><label for="subject_id">Subject</label><select id="subject_id" name="subject_id"><option value="">Choose&hellip;</option>{% for s in subjects %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="grade_id">Grade (optional metadata)</label><select id="grade_id" name="grade_id"><option value="">None</option>{% for g in grades %}<option value="{{ g.id }}">{{ g.name }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="test_id">Or add to an existing test</label><select id="test_id" name="test_id"><option value="">Create a new test</option>{% for t in tests %}<option value="{{ t.id }}">{{ t.title }}</option>{% endfor %}</select></div>
+    </div>
+    <button class="btn primary" type="submit">{{ icon('upload', 18) }} Upload and extract</button>
+    <p class="muted small">Supported: A) B) C) D) and 1. 2. 3. 4. options, Latin/Cyrillic/Uzbek text, answer lines (Javob: A), marked answers (*A) or answer keys at the end. Scanned pages use OCR. You always review before anything is published.</p>
+  </form>
+</div>
+<h2>Uploaded documents</h2>
+{% if docs %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>File</th><th>Test</th><th>Pages</th><th>Method</th><th>Questions</th><th>Uploaded</th><th></th></tr></thead><tbody>
+{% for d in docs %}<tr><td data-label="File">{{ d.filename }}</td><td data-label="Test">{% if d.test_id %}<a href="{{ url_for('admin.test_questions', tid=d.test_id) }}">{{ d.title }}</a>{% else %}&ndash;{% endif %}</td>
+<td data-label="Pages">{{ d.page_count }}</td><td data-label="Method">{{ d.method }}</td><td data-label="Questions">{{ d.questions_found }}</td><td data-label="Uploaded">{{ d.created_at|dt }}</td>
+<td class="nolabel"><a class="act" href="{{ url_for('admin.pdf_download', did=d.id) }}" aria-label="Download original" title="Download">{{ icon('download', 18) }}</a></td></tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty('No PDFs uploaded yet.', 'upload') }}{% endif %}
+{% endblock %}

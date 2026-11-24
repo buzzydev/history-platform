@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager, act_edit, act_post, act_delete with context %}
+{% block title %}Users{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Users</h1></div>
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Name, username or phone" aria-label="Search">
+  <select name="role" aria-label="Role"><option value="">All roles</option>{% for r in ['student','teacher','admin'] %}<option value="{{ r }}" {{ 'selected' if role == r }}>{{ r }}</option>{% endfor %}</select>
+  <select name="status" aria-label="Status"><option value="">Any status</option><option value="blocked" {{ 'selected' if st == 'blocked' }}>Blocked</option></select>
+  <button class="btn primary" type="submit">Filter</button>
+</form>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Username</th><th>Name</th><th>Phone</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody>
+{% for u in pg.rows %}<tr>
+<td data-label="Username"><strong>{{ u.username }}</strong></td><td data-label="Name">{{ u.first_name }} {{ u.last_name }}</td><td data-label="Phone">{{ u.phone }}</td>
+<td data-label="Role"><span class="badge {{ 'info' if u.role != 'student' else '' }}">{{ u.role }}</span></td>
+<td data-label="Status">{% if u.is_blocked %}<span class="badge danger">Blocked</span>{% else %}<span class="badge success">Active</span>{% endif %}</td>
+<td data-label="Joined">{{ u.created_at[:10] }}</td>
+<td class="nolabel"><div class="actions">
+  {{ act_edit(url_for('admin.user_edit', uid=u.id), 'Edit user') }}
+  {{ act_post(url_for('admin.user_block', uid=u.id), 'ban', 'Unblock' if u.is_blocked else 'Block', '', ('Unblock ' if u.is_blocked else 'Block ') ~ u.username ~ '?') }}
+  {{ act_post(url_for('admin.user_reset_link', uid=u.id), 'key', 'Create password reset link') }}
+  {{ act_delete(url_for('admin.user_delete', uid=u.id), 'Delete ' ~ u.username ~ ' and all their results? This cannot be undone.', 'Delete user') }}
+</div></td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No users match.') }}{% endif %}
+{% endblock %}

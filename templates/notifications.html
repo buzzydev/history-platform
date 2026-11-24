@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty with context %}
+{% block title %}Notifications{% endblock %}
+{% block subnav %}{% if current_user.role == 'student' %}{% include "partials/student_nav.html" %}{% endif %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Notification center</h1></div>
+{% if notes %}
+<div class="card">
+{% for n in notes %}
+  <div class="note{{ ' unread' if not n.is_read }}">
+    <div class="row between"><span class="t">{{ n.title }}</span><span class="badge {{ n.level if n.level in ('success','warning','info') else ('danger' if n.level == 'error' else '') }}">{{ 'Announcement' if n.is_announcement else n.level }}</span></div>
+    {% if n.body %}<div class="muted small">{{ n.body }}</div>{% endif %}
+    <div class="muted small">{{ n.created_at|dt }}</div>
+  </div>
+{% endfor %}
+</div>
+{% else %}{{ empty('You have no notifications.', 'bell') }}{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager with context %}
+{% block title %}Login history{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Login history</h1></div>
+<form class="filters" method="get"><input type="search" name="q" value="{{ q }}" placeholder="Username" aria-label="Username">
+  <select name="ok" aria-label="Result"><option value="">All</option><option value="1" {{ 'selected' if ok == '1' }}>Successful</option><option value="0" {{ 'selected' if ok == '0' }}>Failed</option></select><span></span><button class="btn primary" type="submit">Filter</button></form>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Time</th><th>Username</th><th>Result</th><th>IP</th><th>Device / browser</th><th>Session</th></tr></thead><tbody>
+{% for r in pg.rows %}<tr><td data-label="Time">{{ r.created_at|dt }}</td><td data-label="Username">{{ r.username }}</td>
+<td data-label="Result">{% if r.success %}<span class="badge success">Success</span>{% else %}<span class="badge danger">{{ r.reason or 'Failed' }}</span>{% endif %}</td>
+<td data-label="IP">{{ r.ip or '' }}</td><td data-label="Device" class="small">{{ (r.user_agent or '')[:80] }}</td><td data-label="Session" class="small">{{ (r.session_id or '')[:8] }}</td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No login events.') }}{% endif %}
+{% endblock %}

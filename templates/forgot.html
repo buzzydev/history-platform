@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Forgot password{% endblock %}
+{% block content %}
+<div class="card auth-card">
+  <h1>Forgot your password?</h1>
+  <p>Ask your teacher or the site administrator for a one-time reset link. The link is valid for one hour and can be used once.</p>
+  <a class="btn primary" href="{{ url_for('auth.login') }}">Back to log in</a>
+</div>
+{% endblock %}

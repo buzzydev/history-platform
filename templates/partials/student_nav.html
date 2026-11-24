@@ -1,0 +1,7 @@
+<nav class="subnav" aria-label="Student sections">
+  <a href="{{ url_for('main.dashboard') }}" {% if request.endpoint == 'main.dashboard' %}aria-current="page"{% endif %}>Dashboard</a>
+  <a href="{{ url_for('main.tests') }}" {% if request.endpoint in ('main.tests','main.test_detail') %}aria-current="page"{% endif %}>Tests</a>
+  <a href="{{ url_for('main.history') }}" {% if request.endpoint == 'main.history' %}aria-current="page"{% endif %}>My history</a>
+  <a href="{{ url_for('main.leaderboard') }}" {% if request.endpoint == 'main.leaderboard' %}aria-current="page"{% endif %}>Leaderboard</a>
+  <a href="{{ url_for('main.notifications') }}" {% if request.endpoint == 'main.notifications' %}aria-current="page"{% endif %}>Notifications</a>
+</nav>

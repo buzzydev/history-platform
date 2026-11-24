@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf, icon with context %}
+{% block title %}Questions{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ t.title }}</h1>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('admin.test_edit', tid=t.id) }}">Settings</a>
+    <form class="inline" method="post" action="{{ url_for('admin.test_publish', tid=t.id) }}">{{ csrf() }}
+      {% if t.status == 'published' %}<input type="hidden" name="action" value="unpublish"><button class="btn" type="submit" data-keep="1">Unpublish</button>
+      {% else %}<button id="publish-btn" class="btn primary" type="submit" data-keep="1">Publish test</button>{% endif %}
+    </form>
+  </div>
+</div>
+<p class="muted small">Status: {{ t.status }}. Extracted questions are never published automatically: review, correct, approve all, then publish.</p>
+{% if doc %}
+<div class="card mb">
+  <strong>Source PDF:</strong> {{ doc.filename }} <span class="muted small">({{ doc.page_count }} pages, {{ doc.method }} extraction)</span>
+  <a class="btn" href="{{ url_for('admin.pdf_download', did=doc.id) }}">{{ icon('download', 18) }} Original</a>
+  {% for w in doc.warnings|fromjson %}<div class="notice warning small">&#9888; {{ w }}</div>{% endfor %}
+</div>
+{% endif %}
+<div id="review-root" data-test-id="{{ t.id }}"></div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/review.js') }}"></script>{% endblock %}

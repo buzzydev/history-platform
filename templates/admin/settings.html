@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf with context %}
+{% block title %}Settings{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Website settings</h1></div>
+<div class="card"><form method="post">{{ csrf() }}
+{% for key, label, kind in fields %}
+  {% if kind == 'lang' %}<div class="field"><label for="s-{{ key }}">{{ label }}</label><select id="s-{{ key }}" name="{{ key }}"><option value="uz" {{ 'selected' if vals[key] == 'uz' }}>O'zbekcha</option><option value="en" {{ 'selected' if vals[key] == 'en' }}>English</option></select></div>
+  {% elif kind == 'flag' %}<label class="check field"><input type="checkbox" name="{{ key }}" value="1" {{ 'checked' if vals[key] == '1' }}> {{ label }}</label>
+  {% else %}<div class="field"><label for="s-{{ key }}">{{ label }}</label><input id="s-{{ key }}" name="{{ key }}" type="{{ 'number' if kind == 'int' else 'text' }}" value="{{ vals[key] }}"></div>{% endif %}
+{% endfor %}
+<button class="btn primary" type="submit">Save settings</button></form></div>
+{% endblock %}

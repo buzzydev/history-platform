@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf with context %}
+{% block title %}{{ 'New test' if is_new else 'Edit test' }}{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ 'New test collection' if is_new else 'Test settings' }}</h1></div>
+<div class="card"><form method="post" novalidate>{{ csrf() }}
+  <div class="field"><label for="title">Title</label><input id="title" name="title" type="text" required maxlength="150" value="{{ t.title }}"></div>
+  <div class="form-grid">
+    <div class="field"><label for="subject_id">Subject</label><select id="subject_id" name="subject_id" required><option value="">Choose&hellip;</option>{% for s in subjects %}<option value="{{ s.id }}" {{ 'selected' if t.subject_id == s.id }}>{{ s.name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="grade_id">Grade (organisational only)</label><select id="grade_id" name="grade_id"><option value="">None</option>{% for g in grades %}<option value="{{ g.id }}" {{ 'selected' if t.grade_id == g.id }}>{{ g.name }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="field"><label for="description">Description</label><textarea id="description" name="description" maxlength="1000">{{ t.description }}</textarea></div>
+  <div class="form-grid">
+    <div class="field"><label for="qpa">Questions per attempt</label><input id="qpa" name="questions_per_attempt" type="number" min="1" max="500" value="{{ t.questions_per_attempt }}"></div>
+    <div class="field"><label for="tl">Time limit (minutes, 0 = none)</label><input id="tl" name="time_limit_minutes" type="number" min="0" max="600" value="{{ t.time_limit_minutes }}"></div>
+    <div class="field"><label for="ma">Max attempts per student (0 = unlimited)</label><input id="ma" name="max_attempts" type="number" min="0" max="1000" value="{{ t.max_attempts }}"></div>
+    <span></span>
+    <div class="field"><label for="pa">Publication date (optional)</label><input id="pa" name="publish_at" type="datetime-local" value="{{ local(t.publish_at) }}"></div>
+    <div class="field"><label for="ea">Expiration date (optional)</label><input id="ea" name="expires_at" type="datetime-local" value="{{ local(t.expires_at) }}"></div>
+  </div>
+  <div class="checks field">
+    <label class="check"><input type="checkbox" name="randomize_questions" value="1" {{ 'checked' if t.randomize_questions }}> Randomise question order</label>
+    <label class="check"><input type="checkbox" name="randomize_options" value="1" {{ 'checked' if t.randomize_options }}> Randomise answer options</label>
+    <label class="check"><input type="checkbox" name="show_correct" value="1" {{ 'checked' if t.show_correct }}> Show correct answer after each question</label>
+    <label class="check"><input type="checkbox" name="show_explanation" value="1" {{ 'checked' if t.show_explanation }}> Show explanation if available</label>
+    <label class="check"><input type="checkbox" name="show_results" value="1" {{ 'checked' if t.show_results }}> Show final results to students</label>
+    <label class="check"><input type="checkbox" name="is_enabled" value="1" {{ 'checked' if t.is_enabled }}> Test enabled</label>
+  </div>
+  <p class="muted small">Dates use the site time zone. Questions are picked fairly: unseen ones first; when order randomisation is off they are shown in their saved order.</p>
+  <div class="row"><button class="btn primary" type="submit">Save</button><a class="btn" href="{{ url_for('admin.tests') }}">Cancel</a></div>
+</form></div>
+{% endblock %}

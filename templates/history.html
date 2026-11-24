@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager, score_badge with context %}
+{% block title %}My history{% endblock %}
+{% block subnav %}{% include "partials/student_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>My quiz history</h1></div>
+{% if pg.rows %}
+<div class="table-wrap"><table class="table-stack"><thead><tr><th>Test</th><th>Attempt</th><th>Score</th><th>Correct</th><th>Time</th><th>Date</th><th></th></tr></thead><tbody>
+{% for a in pg.rows %}<tr>
+<td data-label="Test">{{ a.title }}</td><td data-label="Attempt">#{{ a.attempt_no }}</td>
+<td data-label="Score">{% if a.status != 'in_progress' %}{{ score_badge(a.percentage) }}{% else %}<span class="badge warning">In progress</span>{% endif %}</td>
+<td data-label="Correct">{{ a.correct_count }}/{{ a.total_questions }}</td><td data-label="Time">{{ a.time_spent_seconds|dur }}</td><td data-label="Date">{{ a.started_at|dt }}</td>
+<td class="nolabel"><a class="btn" href="{{ url_for('main.result', attempt_id=a.id) }}">Open</a></td></tr>{% endfor %}
+</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No quiz history yet.') }}{% endif %}
+{% endblock %}

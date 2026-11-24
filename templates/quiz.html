@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Quiz{% endblock %}
+{% block content %}
+<div id="quiz-root" data-attempt-id="{{ attempt.id }}"><noscript><div class="notice danger">JavaScript is required to take a quiz.</div></noscript></div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='js/quiz.js') }}"></script>{% endblock %}

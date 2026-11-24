@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_ui.html" import field, csrf with context %}
+{% block title %}Edit user{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Edit {{ u.username }}</h1></div>
+<div class="card">
+<form method="post" novalidate>{{ csrf() }}
+  <div class="form-grid">{{ field('first_name', 'First name', request.form.get('first_name', u.first_name)) }}{{ field('last_name', 'Last name', request.form.get('last_name', u.last_name)) }}</div>
+  {{ field('phone', 'Phone', request.form.get('phone', u.phone), 'tel', errors.get('phone','')) }}
+  <div class="field"><label for="f-role">Role</label>
+    <select id="f-role" name="role">{% for r in ['student','teacher','admin'] %}<option value="{{ r }}" {{ 'selected' if u.role == r }}>{{ r }}</option>{% endfor %}</select>
+    <div class="muted small">Only administrators can appoint teachers or administrators.</div></div>
+  <div class="field"><label>Teacher permissions (used when role is teacher)</label><div class="checks">
+    {% for k, label in perm_labels.items() %}<label class="check"><input type="checkbox" name="perm_{{ k }}" value="1" {{ 'checked' if perms.get(k) }}> {{ label }}</label>{% endfor %}</div></div>
+  <div class="row"><button class="btn primary" type="submit">Save</button><a class="btn" href="{{ url_for('admin.users') }}">Cancel</a></div>
+</form></div>
+{% endblock %}

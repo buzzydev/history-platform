@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Reset link{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Password reset link</h1></div>
+<div class="card stack">
+  <p>Give this one-time link to <strong>{{ u.username }}</strong>. It expires in 1 hour and is shown only once.</p>
+  <div class="code-box">{{ link }}</div>
+  <a class="btn" href="{{ url_for('admin.users') }}">Back to users</a>
+</div>
+{% endblock %}

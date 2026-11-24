@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf, empty, icon, act_delete with context %}
+{% block title %}{{ label }}{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ label }}</h1></div>
+<div class="card mb">
+  <form method="post" class="filters" action="{{ url_for('admin.catalog', kind=kind) }}">{{ csrf() }}
+    <input type="text" name="name" placeholder="New {{ label[:-1]|lower }} name" required maxlength="80" aria-label="Name">
+    {% if kind == 'grades' %}<input type="number" name="sort_order" placeholder="Order" aria-label="Order">{% else %}<input type="text" name="description" placeholder="Description (optional)" aria-label="Description">{% endif %}
+    <span></span><button class="btn primary" type="submit">{{ icon('plus', 18) }} Add</button>
+  </form>
+</div>
+{% if rows %}<div class="stack">
+{% for r in rows %}
+  <div class="card"><form method="post" class="filters" action="{{ url_for('admin.catalog_edit', kind=kind, rid=r.id) }}">{{ csrf() }}
+    <input type="text" name="name" value="{{ r.name }}" required maxlength="80" aria-label="Name">
+    {% if kind == 'grades' %}<input type="number" name="sort_order" value="{{ r.sort_order }}" aria-label="Order">{% else %}<input type="text" name="description" value="{{ r.description }}" aria-label="Description">{% endif %}
+    <span class="muted small">{{ r.uses }} test(s)</span>
+    <div class="actions"><button class="act edit" type="submit" aria-label="Save" title="Save" data-keep="1">{{ icon('check', 18) }}</button></div>
+  </form>
+  <div class="right">{{ act_delete(url_for('admin.catalog_delete', kind=kind, rid=r.id), 'Delete ' ~ r.name ~ '?', 'Delete') }}</div></div>
+{% endfor %}</div>
+{% else %}{{ empty('Nothing here yet.') }}{% endif %}
+{% endblock %}

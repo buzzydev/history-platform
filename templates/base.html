@@ -1,0 +1,71 @@
+{% from "_ui.html" import icon with context %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}{{ site_name }}{% endblock %} &middot; {{ site_name }}</title>
+  <script src="{{ url_for('static', filename='js/theme-init.js') }}"></script>
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+</head>
+<body>
+<a class="sr-only" href="#main">Skip to content</a>
+<header class="navbar">
+  <div class="nav-inner">
+    <a class="brand" href="{{ url_for('main.index') }}"><span class="brand-mark">{{ icon('home', 18) }}</span><span class="lbl-brand">{{ site_name }}</span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a class="nav-link" href="{{ url_for('main.dashboard') if current_user else url_for('main.index') }}" {% if request.endpoint in ('main.index','main.dashboard','admin.overview','teacher.dashboard') %}aria-current="page"{% endif %}>{{ icon('home', 18) }}<span class="lbl"> Home</span></a>
+    </nav>
+    <div class="nav-right">
+      <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch theme" aria-pressed="false">
+        <span class="theme-sun">{{ icon('sun') }}</span><span class="theme-moon">{{ icon('moon') }}</span>
+      </button>
+      {% if current_user %}
+      <div class="dropdown" data-on-open="notifications">
+        <button type="button" class="icon-btn" data-dropdown-toggle aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+          {{ icon('bell') }}{% if unread_count %}<span class="badge-dot">{{ unread_count if unread_count < 100 else '99+' }}</span>{% endif %}
+        </button>
+        <div class="dropdown-menu notif-menu" id="notif-menu">
+          {% for n in bell_notes %}
+          <div class="note{{ ' unread' if not n.is_read }}"><div class="t">{{ n.title }}</div>{% if n.body %}<div class="muted small">{{ n.body[:90] }}</div>{% endif %}<div class="muted small">{{ n.created_at|dt }}</div></div>
+          {% else %}<div class="note muted small">No notifications.</div>{% endfor %}
+          <hr>
+          <a href="{{ url_for('main.notifications') }}">{{ icon('bell', 18) }} Notification center</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button type="button" class="user-btn" data-dropdown-toggle aria-haspopup="true" aria-expanded="false">
+          <span class="name">{{ current_user.username }}</span>{{ icon('user', 18) }}
+        </button>
+        <div class="dropdown-menu" role="menu">
+          <a href="{{ url_for('main.profile') }}" role="menuitem">{{ icon('user', 18) }} Profile</a>
+          <hr>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="item" role="menuitem" data-keep="1">{{ icon('logout', 18) }} Sign Out</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <a class="btn" href="{{ url_for('auth.login') }}">Log in</a>
+      <a class="btn primary" href="{{ url_for('auth.register') }}">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+<main id="main">
+  {% block subnav %}{% endblock %}
+  {% block content %}{% endblock %}
+</main>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+{% set flashed = get_flashed_messages(with_categories=true) %}
+<div id="flash-data" data-messages='{{ flashed|tojson }}' hidden></div>
+<footer class="foot"><a href="{{ url_for('set_lang', code='uz', next=request.path) }}" {% if lang == 'uz' %}aria-current="true"{% endif %}>O'zbekcha</a> &middot; <a href="{{ url_for('set_lang', code='en', next=request.path) }}" {% if lang == 'en' %}aria-current="true"{% endif %}>English</a></footer>
+<div id="i18n-data" data-dict='{{ i18n_dict|tojson }}' hidden></div>
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

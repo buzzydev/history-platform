@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager, score_badge, icon with context %}
+{% block title %}Results{% endblock %}
+{% block subnav %}{% if current_user.role == 'admin' %}{% include "partials/admin_nav.html" %}{% else %}{% include "partials/teacher_nav.html" %}{% endif %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Student results</h1>
+  {% if has_perm('export') %}<div class="actions">
+    <a class="btn" href="{{ url_for(export, fmt='xlsx', q=q, test=tid) }}">{{ icon('download', 18) }} Excel</a>
+    <a class="btn" href="{{ url_for(export, fmt='pdf', q=q, test=tid) }}">{{ icon('download', 18) }} PDF</a></div>{% endif %}
+</div>
+<form class="filters" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Student name or username" aria-label="Search">
+  <select name="test" aria-label="Test"><option value="">All tests</option>{% for t in tests %}<option value="{{ t.id }}" {{ 'selected' if tid == t.id|string }}>{{ t.title }}</option>{% endfor %}</select>
+  <span></span><button class="btn primary" type="submit">Filter</button>
+</form>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Student</th><th>Test</th><th>#</th><th>Correct</th><th>Score</th><th>Time</th><th>Completed</th></tr></thead><tbody>
+{% for r in pg.rows %}<tr><td data-label="Student">{{ r.username }}</td><td data-label="Test">{{ r.title }}</td><td data-label="Attempt">{{ r.attempt_no }}</td>
+<td data-label="Correct">{{ r.correct_count }}/{{ r.total_questions }}</td><td data-label="Score">{{ score_badge(r.percentage) }}</td><td data-label="Time">{{ r.time_spent_seconds|dur }}</td><td data-label="Completed">{{ r.completed_at|dt }}</td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No results found.') }}{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager with context %}
+{% block title %}Audit log{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Audit log</h1></div>
+<form class="form-grid card mb" method="get">
+  <div class="field"><label for="user">User</label><input id="user" name="user" type="search" value="{{ f.user }}"></div>
+  <div class="field"><label for="action">Action</label><select id="action" name="action"><option value="">All</option>{% for a in actions %}<option {{ 'selected' if f.action == a }}>{{ a }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="target">Event type</label><select id="target" name="target"><option value="">All</option>{% for a in targets %}<option {{ 'selected' if f.target == a }}>{{ a }}</option>{% endfor %}</select></div>
+  <span></span>
+  <div class="field"><label for="from">From</label><input id="from" name="from" type="text" placeholder="YYYY-MM-DD" value="{{ f['from'] }}"></div>
+  <div class="field"><label for="to">To</label><input id="to" name="to" type="text" placeholder="YYYY-MM-DD" value="{{ f.to }}"></div>
+  <button class="btn primary" type="submit">Filter</button>
+</form>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Target</th><th>IP</th><th>Details</th></tr></thead><tbody>
+{% for r in pg.rows %}<tr><td data-label="Time">{{ r.created_at|dt }}</td><td data-label="User">{{ r.actor_username or 'system' }}</td><td data-label="Action"><strong>{{ r.action }}</strong></td>
+<td data-label="Target">{{ r.target_type or '' }} {{ r.target_id or '' }}</td><td data-label="IP">{{ r.ip or '' }}</td><td data-label="Details" class="small">{{ r.metadata if r.metadata != '{}' else '' }}</td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No audit events match.') }}{% endif %}
+{% endblock %}

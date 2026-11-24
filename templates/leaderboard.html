@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty with context %}
+{% block title %}Leaderboard{% endblock %}
+{% block subnav %}{% if current_user.role == 'student' %}{% include "partials/student_nav.html" %}{% elif current_user.role == 'teacher' %}{% include "partials/teacher_nav.html" %}{% else %}{% include "partials/admin_nav.html" %}{% endif %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Global leaderboard</h1></div>
+<p class="muted small">Ranking uses a reliability-weighted average, so one lucky attempt cannot dominate. Students appear after {{ min_attempts }} completed attempts.</p>
+{% if rows %}
+<div class="table-wrap"><table class="table-stack"><thead><tr><th>Rank</th><th>Student</th><th>Quizzes</th><th>Average</th><th>Correct answers</th><th>Best</th><th>Score</th></tr></thead><tbody>
+{% for r in rows %}<tr{% if r.id == current_user.id %} class="unread"{% endif %}>
+<td data-label="Rank"><strong>{{ r.rank }}</strong></td><td data-label="Student">{{ r.username }}</td><td data-label="Quizzes">{{ r.attempts }}</td>
+<td data-label="Average">{{ r.avg_pct|round(1) }}%</td><td data-label="Correct answers">{{ r.correct }}</td><td data-label="Best">{{ r.best|round(0)|int }}%</td><td data-label="Score">{{ r.score }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}{{ empty('The leaderboard is empty. Complete tests to appear here!') }}{% endif %}
+{% endblock %}

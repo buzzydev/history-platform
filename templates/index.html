@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon with context %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Learn history by testing yourself</h1>
+  <p>Practice World History and Uzbekistan History with fresh, randomised questions and see your progress after every test.</p>
+  <div class="row">
+    {% if current_user %}<a class="btn primary" href="{{ url_for('main.dashboard') }}">Open my dashboard</a>
+    {% else %}<a class="btn primary" href="{{ url_for('auth.register') }}">Create free account</a><a class="btn" href="{{ url_for('auth.login') }}">Log in</a>{% endif %}
+  </div>
+</section>
+<div class="stats">
+  <div class="stat"><div class="v">{{ stats.tests }}</div><div class="l">Published tests</div></div>
+  <div class="stat"><div class="v">{{ stats.questions }}</div><div class="l">Questions</div></div>
+  <div class="stat"><div class="v">{{ stats.students }}</div><div class="l">Students</div></div>
+  <div class="stat"><div class="v">6&ndash;11+</div><div class="l">Grades supported</div></div>
+</div>
+<div class="grid cols-3 mt">
+  <div class="card"><h3>Any test, any grade</h3><p class="muted">Every student can open every published test. No class restrictions.</p></div>
+  <div class="card"><h3>Fair random questions</h3><p class="muted">Each attempt gets a new shuffle and avoids questions you already saw until the pool is used up.</p></div>
+  <div class="card"><h3>Instant feedback</h3><p class="muted">See the correct answer and explanation after every question, and a full result at the end.</p></div>
+</div>
+{% endblock %}

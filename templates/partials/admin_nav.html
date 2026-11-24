@@ -1,0 +1,10 @@
+{% set items = [('admin.overview','Overview'),('admin.users','Users'),('admin.catalog','Subjects','subjects'),('admin.catalog','Grades','grades'),('admin.tests','Tests'),('admin.pdf','PDF import'),('admin.attempts','Attempts'),('admin.results','Results'),('admin.leaderboard','Leaderboard'),('admin.audit_log','Audit log'),('admin.logins','Logins'),('admin.notifications','Announcements'),('admin.settings','Settings'),('admin.backups','Backups'),('admin.health','Health')] %}
+<nav class="subnav" aria-label="Admin sections">
+{% for it in items %}
+  {% if it|length == 3 %}
+    <a href="{{ url_for(it[0], kind=it[2]) }}" {% if request.endpoint == it[0] and request.view_args.get('kind') == it[2] %}aria-current="page"{% endif %}>{{ it[1] }}</a>
+  {% else %}
+    <a href="{{ url_for(it[0]) }}" {% if request.endpoint == it[0] or (it[0]=='admin.tests' and request.endpoint in ('admin.test_new','admin.test_edit','admin.test_questions')) %}aria-current="page"{% endif %}>{{ it[1] }}</a>
+  {% endif %}
+{% endfor %}
+</nav>

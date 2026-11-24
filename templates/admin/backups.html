@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_ui.html" import csrf, empty, icon with context %}
+{% block title %}Backups{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Database backups</h1>
+  <form method="post" action="{{ url_for('admin.backup_run') }}">{{ csrf() }}<button class="btn primary" type="submit">Run backup now</button></form></div>
+{% if not separate %}<div class="notice warning">Backups are stored in the <strong>primary</strong> database. For real disaster recovery set <code>BACKUP_DATABASE_URL</code> to a separate database and download copies regularly.</div>{% endif %}
+<p class="muted small">A backup is marked verified only after the archive was restored into a scratch database and all row counts matched. Scheduler thread: {{ 'running' if state.alive else 'not running in this process' }}.</p>
+{% if rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>#</th><th>When</th><th>Kind</th><th>Status</th><th>Size</th><th>Verified</th><th></th></tr></thead><tbody>
+{% for b in rows %}<tr><td data-label="#">{{ b.id }}</td><td data-label="When">{{ b.created_at|dt }}</td><td data-label="Kind">{{ b.kind }}</td>
+<td data-label="Status"><span class="badge {{ 'success' if b.status == 'success' else ('danger' if b.status == 'failed' else 'warning') }}">{{ b.status }}</span>{% if b.error %}<div class="small muted">{{ b.error }}</div>{% endif %}</td>
+<td data-label="Size">{{ (b.size_bytes / 1024)|round(1) }} KB</td><td data-label="Verified">{{ 'yes' if b.verified else 'no' }}</td>
+<td class="nolabel">{% if b.status == 'success' %}<a class="act" href="{{ url_for('admin.backup_download', bid=b.id) }}" aria-label="Download" title="Download">{{ icon('download', 18) }}</a>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty('No backups yet.') }}{% endif %}
+{% endblock %}

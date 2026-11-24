@@ -1,0 +1,7 @@
+<nav class="subnav" aria-label="Teacher sections">
+  <a href="{{ url_for('teacher.dashboard') }}" {% if request.endpoint == 'teacher.dashboard' %}aria-current="page"{% endif %}>Overview</a>
+  {% if has_perm('view_students') %}<a href="{{ url_for('teacher.students') }}" {% if request.endpoint in ('teacher.students','teacher.student_detail') %}aria-current="page"{% endif %}>Students</a>{% endif %}
+  {% if has_perm('view_results') %}<a href="{{ url_for('teacher.results') }}" {% if request.endpoint == 'teacher.results' %}aria-current="page"{% endif %}>Results</a>{% endif %}
+  {% if has_perm('view_analytics') %}<a href="{{ url_for('teacher.analytics') }}" {% if request.endpoint == 'teacher.analytics' %}aria-current="page"{% endif %}>Analytics</a>{% endif %}
+  <a href="{{ url_for('main.leaderboard') }}">Leaderboard</a>
+</nav>

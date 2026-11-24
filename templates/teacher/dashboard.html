@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, score_badge with context %}
+{% block title %}Teacher dashboard{% endblock %}
+{% block subnav %}{% include "partials/teacher_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Teacher dashboard</h1></div>
+<div class="stats">
+  <div class="stat"><div class="v">{{ students }}</div><div class="l">Students</div></div>
+  <div class="stat"><div class="v">{{ totals.attempts or 0 }}</div><div class="l">Completed quizzes</div></div>
+  <div class="stat"><div class="v">{{ (totals.avg or 0)|round(0)|int }}%</div><div class="l">Average score</div></div>
+</div>
+<h2>Subjects</h2>
+{% if subj %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Subject</th><th>Attempts</th><th>Average</th></tr></thead><tbody>
+{% for s in subj %}<tr><td data-label="Subject">{{ s.name }}</td><td data-label="Attempts">{{ s.attempts }}</td><td data-label="Average">{{ score_badge(s.avg) }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}{{ empty('No completed quizzes yet.') }}{% endif %}
+{% if has_perm('view_results') %}
+<h2>Latest results</h2>
+{% if recent %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Student</th><th>Test</th><th>Score</th><th>Date</th></tr></thead><tbody>
+{% for r in recent %}<tr><td data-label="Student">{{ r.username }}</td><td data-label="Test">{{ r.title }}</td><td data-label="Score">{{ score_badge(r.percentage) }}</td><td data-label="Date">{{ r.completed_at|dt }}</td></tr>{% endfor %}</tbody></table></div>{% else %}{{ empty('Nothing yet.') }}{% endif %}
+{% endif %}
+{% endblock %}

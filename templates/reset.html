@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_ui.html" import pw_field, csrf with context %}
+{% block title %}Reset password{% endblock %}
+{% block content %}
+<div class="card auth-card">
+  <h1>Reset password</h1>
+  {% if invalid %}<div class="notice danger">This reset link is invalid, expired or already used.</div>
+  <a class="btn" href="{{ url_for('auth.forgot') }}">Request a new link</a>
+  {% else %}
+  <form method="post" novalidate>
+    {{ csrf() }}
+    {{ pw_field('password', 'New password', errors.get('password',''), 'new-password') }}
+    {{ pw_field('password_confirm', 'Confirm new password', '', 'new-password') }}
+    <button class="btn primary block" type="submit">Set new password</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

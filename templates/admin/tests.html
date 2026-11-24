@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager, icon, act_edit, act_post, act_delete with context %}
+{% block title %}Tests{% endblock %}
+{% block subnav %}{% include "partials/admin_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Test collections</h1><div class="actions"><a class="btn" href="{{ url_for('admin.pdf') }}">{{ icon('upload', 18) }} Import PDF</a><a class="btn primary" href="{{ url_for('admin.test_new') }}">{{ icon('plus', 18) }} New test</a></div></div>
+<form class="filters" method="get"><input type="search" name="q" value="{{ q }}" placeholder="Search tests" aria-label="Search"><button class="btn primary" type="submit">Search</button></form>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Title</th><th>Subject</th><th>Questions</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+{% for t in pg.rows %}<tr>
+<td data-label="Title"><strong>{{ t.title }}</strong><div class="muted small">{{ t.grade_name or 'No grade' }}</div></td><td data-label="Subject">{{ t.subject_name }}</td>
+<td data-label="Questions">{{ t.approved }} approved{% if t.pending %} &middot; <span class="badge warning">{{ t.pending }} pending</span>{% endif %}</td>
+<td data-label="Status">{% if t.status == 'published' %}<span class="badge success">Published</span>{% else %}<span class="badge warning">Draft</span>{% endif %}{% if not t.is_enabled %} <span class="badge danger">Disabled</span>{% endif %}</td>
+<td class="nolabel"><div class="actions">
+  <a class="act edit" href="{{ url_for('admin.test_questions', tid=t.id) }}" aria-label="Review questions" title="Questions">{{ icon('list', 18) }}</a>
+  {{ act_edit(url_for('admin.test_edit', tid=t.id), 'Edit settings') }}
+  {{ act_post(url_for('admin.test_toggle', tid=t.id), 'ban', 'Disable' if t.is_enabled else 'Enable', '', ('Disable' if t.is_enabled else 'Enable') ~ ' this test?') }}
+  {{ act_delete(url_for('admin.test_delete', tid=t.id), 'Delete this test, its questions and all student attempts?', 'Delete test') }}
+</div></td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No tests yet. Import a PDF or create one manually.') }}{% endif %}
+{% endblock %}

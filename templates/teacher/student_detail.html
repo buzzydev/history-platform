@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_ui.html" import empty, pager, score_badge with context %}
+{% block title %}{{ s.username }}{% endblock %}
+{% block subnav %}{% include "partials/teacher_nav.html" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{{ s.first_name }} {{ s.last_name }} <span class="muted">({{ s.username }})</span></h1></div>
+<div class="stats">
+  <div class="stat"><div class="v">{{ stats.completed }}</div><div class="l">Completed</div></div>
+  <div class="stat"><div class="v">{{ stats.average|round(0)|int }}%</div><div class="l">Average</div></div>
+  <div class="stat"><div class="v">{{ stats.best|round(0)|int }}%</div><div class="l">Best</div></div>
+  <div class="stat"><div class="v">{{ stats.correct }}</div><div class="l">Correct answers</div></div>
+</div>
+<h2>Quiz history</h2>
+{% if pg.rows %}<div class="table-wrap"><table class="table-stack"><thead><tr><th>Test</th><th>Attempt</th><th>Status</th><th>Score</th><th>Time</th><th>Date</th></tr></thead><tbody>
+{% for a in pg.rows %}<tr><td data-label="Test">{{ a.title }}</td><td data-label="Attempt">#{{ a.attempt_no }}</td><td data-label="Status">{{ a.status.replace('_',' ') }}</td>
+<td data-label="Score">{{ score_badge(a.percentage) if a.status != 'in_progress' else '–' }}</td><td data-label="Time">{{ a.time_spent_seconds|dur }}</td><td data-label="Date">{{ a.started_at|dt }}</td></tr>{% endfor %}</tbody></table></div>{{ pager(pg) }}
+{% else %}{{ empty('No attempts.') }}{% endif %}
+{% endblock %}
